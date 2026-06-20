@@ -619,6 +619,7 @@
             <button class="int-tab active" onclick="switchIntTab(this, 'wp')">WordPress</button>
             <button class="int-tab" onclick="switchIntTab(this, 'blogger')">Blogger (Blogspot)</button>
             <button class="int-tab" onclick="switchIntTab(this, 'html')">HTML Biasa / GitHub Pages</button>
+            <button class="int-tab" onclick="switchIntTab(this, 'emojisvg')">Emoji SVG (Instan)</button>
           </div>
 
           <!-- WordPress integration -->
@@ -658,6 +659,21 @@
               <button class="code-copy-btn" onclick="copySnippet('htmlCodeText', this)"><i class="far fa-copy"></i> Salin</button>
               <pre><code id="htmlCodeText">&lt;link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png"&gt;
 &lt;link rel="apple-touch-icon" href="favicon-192x192.png"&gt;</code></pre>
+            </div>
+          </div>
+
+          <!-- Emoji SVG integration -->
+          <div id="emojisvgIntPane" class="int-pane">
+            <div class="int-instructions">
+              <p><strong>Cara Instan Menggunakan Emoji SVG (Tanpa Perlu Upload File Gambar):</strong></p>
+              <p>Salin tag HTML tunggal di bawah ini dan tempelkan di dalam tag <code>&lt;head&gt;</code> halaman web Anda. Ikon akan dibaca oleh browser modern sebagai gambar vektor SVG dinamis!</p>
+            </div>
+            <div class="code-box">
+              <button class="code-copy-btn" onclick="copySnippet('emojiSvgCodeText', this)"><i class="far fa-copy"></i> Salin</button>
+              <pre><code id="emojiSvgCodeText">&lt;link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;text y='0.9em' font-size='90'&gt;🚀&lt;/text&gt;&lt;/svg&gt;"&gt;</code></pre>
+            </div>
+            <div class="int-instructions" style="margin-top:0.5rem; font-size:0.8rem; color:var(--text-muted);">
+              <p><em>*Catatan: Sangat praktis karena tidak perlu mengunduh/mengunggah file ikon. Didukung penuh oleh Google Chrome, Firefox, Edge, dan Opera terbaru.</em></p>
             </div>
           </div>
 
@@ -956,6 +972,27 @@
 
       // Update mock tab favicon
       document.getElementById('tabIconPreview').src = mainCanvas.toDataURL('image/png');
+
+      // Update SVG Emoji code block
+      updateSvgEmojiCode();
+    }
+
+    // Update the live copyable SVG tag when emoji is updated
+    function updateSvgEmojiCode() {
+      let character = '🚀';
+      if (config.type === 'emoji') {
+        character = config.emoji;
+      } else if (config.type === 'text') {
+        character = config.text;
+      } else {
+        character = '⭐';
+      }
+
+      const rawTag = `<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>${character}</text></svg>">`;
+      const codeContainer = document.getElementById('emojiSvgCodeText');
+      if (codeContainer) {
+        codeContainer.innerText = rawTag;
+      }
     }
 
     // Trigger PNG file download
