@@ -3,420 +3,972 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Favicon Generator - PWA, WordPress, Blogspot, & HTML Pages</title>
+  <title>Universal Favicon Generator - PWA, WordPress, Blogspot, & HTML Pages</title>
   
-  <!-- FontAwesome Icons -->
+  <!-- FontAwesome Icons for UI -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css">
+  <!-- Modern Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* Styling tokens */
+    :root {
+      --bg-primary: #080b11;
+      --bg-secondary: #0f131a;
+      --bg-card: #171d26;
+      --accent-primary: #3b82f6;
+      --accent-secondary: #ec4899;
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --glass-bg: rgba(15, 19, 26, 0.75);
+      --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: linear-gradient(to right, #ffffff, #9ca3af);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    header p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 1.5rem;
+    }
+
+    .panel {
+      background-color: var(--glass-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.25rem;
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .panel-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+    }
+
+    .panel-title i {
+      color: var(--accent-primary);
+    }
+
+    /* Tab styles */
+    .tabs-nav {
+      display: flex;
+      gap: 0.25rem;
+      background-color: rgba(255, 255, 255, 0.03);
+      padding: 0.25rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      padding: 0.5rem 0.25rem;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.8rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background-color: var(--accent-primary);
+      color: #fff;
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* Grids & Forms */
+    .form-group-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .form-group label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .form-control {
+      background-color: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      padding: 0.5rem 0.75rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      width: 100%;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+    }
+
+    .color-picker-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .color-picker {
+      -webkit-appearance: none;
+      border: none;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      cursor: pointer;
+      background: none;
+    }
+
+    .color-picker::-webkit-color-swatch-wrapper { padding: 0; }
+    .color-picker::-webkit-color-swatch { border: 1px solid var(--border-color); border-radius: 8px; }
+
+    /* Scrollable items */
+    .scroll-presets {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 0.4rem;
+      max-height: 160px;
+      overflow-y: auto;
+      padding: 0.4rem;
+      background-color: rgba(0, 0, 0, 0.15);
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .preset-item {
+      aspect-ratio: 1;
+      background-color: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .preset-item:hover, .preset-item.selected {
+      background-color: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: #fff;
+    }
+
+    .shape-selector {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.4rem;
+    }
+
+    .shape-btn {
+      cursor: pointer;
+      text-align: center;
+      position: relative;
+    }
+
+    .shape-btn input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .shape-box {
+      background-color: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.5rem 0.25rem;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      transition: all 0.2s;
+    }
+
+    .shape-btn input:checked + .shape-box {
+      background-color: rgba(59, 130, 246, 0.15);
+      border-color: var(--accent-primary);
+      color: #fff;
+    }
+
+    /* Canvas showcase */
+    .preview-box {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      padding: 1rem;
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .canvas-wrap {
+      background-image: linear-gradient(45deg, #111 25%, transparent 25%), 
+                        linear-gradient(-45deg, #111 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #111 75%), 
+                        linear-gradient(-45deg, transparent 75%, #111 75%);
+      background-size: 16px 16px;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+      background-color: #161616;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 0.5rem;
+    }
+
+    canvas {
+      width: 144px;
+      height: 144px;
+      display: block;
+      image-rendering: pixelated;
+    }
+
+    /* Mockups */
+    .mock-tab {
+      background-color: #1e1e1e;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      font-size: 0.75rem;
+    }
+    .mock-tab-head {
+      background-color: #121212;
+      padding: 0.3rem 0.5rem;
+      display: flex;
+      gap: 0.25rem;
+      align-items: center;
+    }
+    .mock-tab-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: #444;
+    }
+    .mock-tab-dot:nth-child(1) { background-color: #ff5f56; }
+    .mock-tab-dot:nth-child(2) { background-color: #ffbd2e; }
+    .mock-tab-dot:nth-child(3) { background-color: #27c93f; }
+    .mock-tab-body {
+      padding: 0.35rem 0.5rem 0;
+      background-color: #1e1e1e;
+    }
+    .mock-tab-item {
+      background-color: #2d2d2d;
+      color: #fff;
+      padding: 0.25rem 0.5rem;
+      border-radius: 5px 5px 0 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      width: 120px;
+    }
+    .mock-tab-favicon { width: 14px; height: 14px; object-fit: contain; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary { background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); color: #fff; }
+    .btn-secondary { background-color: rgba(255, 255, 255, 0.04); border-color: var(--border-color); color: var(--text-primary); }
+    .btn:hover { transform: translateY(-1px); }
+
+    /* Integration codes */
+    .int-tabs {
+      display: flex;
+      gap: 0.25rem;
+      border-bottom: 1px solid var(--border-color);
+      overflow-x: auto;
+    }
+    .int-tab {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-secondary);
+      padding: 0.5rem 0.75rem;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .int-tab.active {
+      border-bottom-color: var(--accent-primary);
+      color: #fff;
+    }
+    .int-pane { display: none; flex-direction: column; gap: 0.75rem; }
+    .int-pane.active { display: flex; }
+
+    .code-box {
+      background-color: #080b0f;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      position: relative;
+    }
+    .code-box pre { padding: 0.75rem; margin: 0; overflow-x: auto; }
+    .code-box code { font-family: 'Fira Code', monospace; font-size: 0.75rem; color: #e5e7eb; }
+    .code-copy-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-size: 0.7rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* Toast Notification */
+    .toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999; }
+    .toast {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--accent-primary);
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: var(--shadow-lg);
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      background: rgba(255, 255, 255, 0.1);
+      height: 4px;
+      border-radius: 2px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      background: var(--accent-primary);
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .main-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
 
-  <div class="app-wrapper">
+  <div class="container">
     
-    <!-- App Header -->
-    <header class="app-header">
-      <div class="header-logo">
-        <i class="fas fa-icons"></i>
-        <div class="header-title">
-          <h1>Universal Favicon Generator</h1>
-          <p>Buat favicon cantik dari Emojis, Teks, Shape, atau Gambar Kustom untuk berbagai CMS & HTML.</p>
-        </div>
-      </div>
+    <!-- Top Header -->
+    <header>
       <div>
-        <button class="btn btn-primary" onclick="saveCurrentTemplate()">
-          <i class="fas fa-save"></i> Simpan Desain
-        </button>
+        <h1>Universal Favicon Generator</h1>
+        <p>Desain favicon instant dan langsung salin kode integrasi untuk WordPress, Blogspot, & HTML GitHub Pages.</p>
       </div>
     </header>
 
-    <!-- Workspace Grid -->
-    <div class="workspace-grid">
+    <!-- Content Workspace -->
+    <div class="main-grid">
       
-      <!-- LEFT PANEL: Editor & Configurations -->
+      <!-- LEFT COLUMN: Customizer Controls -->
       <div class="panel">
         <div class="panel-title">
-          <i class="fas fa-palette"></i> Desainer Favicon
-        </div>
-        
-        <!-- Editor Tabs Navigation -->
-        <div class="creator-tabs" style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
-          <button class="tab-btn active" onclick="switchEditorTab(this, 'emoji')">
-            <i class="far fa-smile"></i> Emoji
-          </button>
-          <button class="tab-btn" onclick="switchEditorTab(this, 'fontawesome')">
-            <i class="fab fa-font-awesome"></i> FontAwesome
-          </button>
-          <button class="tab-btn" onclick="switchEditorTab(this, 'preset')">
-            <i class="fas fa-shapes"></i> Preset Shape
-          </button>
-          <button class="tab-btn" onclick="switchEditorTab(this, 'text')">
-            <i class="fas fa-font"></i> Teks
-          </button>
-          <button class="tab-btn" onclick="switchEditorTab(this, 'upload')">
-            <i class="fas fa-upload"></i> Unggah
-          </button>
+          <i class="fas fa-magic"></i> Desain Ikon Anda
         </div>
 
-        <!-- TAB CONTENT: Emojis Preset Grid -->
+        <!-- Creator Tabs -->
+        <div class="tabs-nav">
+          <button class="tab-btn active" onclick="switchTab(this, 'emoji')">Emoji</button>
+          <button class="tab-btn" onclick="switchTab(this, 'shape')">Simbol / Shape</button>
+          <button class="tab-btn" onclick="switchTab(this, 'text')">Teks</button>
+        </div>
+
+        <!-- TAB CONTENT: Emojis Presets Grid -->
         <div id="emojiPane" class="tab-pane active">
-          <div class="icon-preset-container">
-            <label style="font-size:0.85rem; font-weight:600; color:var(--text-secondary);">Pilih Emoji Presets:</label>
-            <div class="icon-presets-scroll" id="emojiPresetsGrid">
-              <!-- JS generates emojis list here -->
-            </div>
+          <div class="scroll-presets" id="emojiPresets">
+            <!-- Populated via JS -->
           </div>
         </div>
 
-        <!-- TAB CONTENT: FontAwesome Icon Grid -->
-        <div id="fontawesomePane" class="tab-pane">
-          <div class="icon-preset-container">
-            <label style="font-size:0.85rem; font-weight:600; color:var(--text-secondary);">Pilih Ikon FontAwesome:</label>
-            <div class="icon-presets-scroll" id="faPresetsGrid">
-              <!-- JS generates FontAwesome list here -->
-            </div>
+        <!-- TAB CONTENT: Vektor Shapes Grid -->
+        <div id="shapePane" class="tab-pane">
+          <div class="scroll-presets" id="shapePresets">
+            <!-- Populated via JS -->
           </div>
         </div>
 
-        <!-- TAB CONTENT: Presets SVG Grid -->
-        <div id="presetPane" class="tab-pane">
-          <div class="icon-preset-container">
-            <label style="font-size:0.85rem; font-weight:600; color:var(--text-secondary);">Pilih Simbol / Shape:</label>
-            <div class="icon-presets-scroll" id="presetIconsGrid">
-              <!-- JS generates SVG icons list here -->
-            </div>
-          </div>
-        </div>
-
-        <!-- TAB CONTENT: Custom Letters/Text -->
+        <!-- TAB CONTENT: Text Input -->
         <div id="textPane" class="tab-pane">
-          <div class="control-row">
-            <div class="control-group">
-              <label for="textLetters">Teks (Maks 3 Huruf)</label>
-              <input type="text" id="textLetters" class="form-control" maxlength="3" value="GO" placeholder="Contoh: A, WP, GO">
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="txtInput">Ketik Teks (Maks 2 Huruf)</label>
+              <input type="text" id="txtInput" class="form-control" maxlength="2" value="F" oninput="redrawFavicon()">
             </div>
-            <div class="control-group">
-              <label for="fontFamilySelect">Gaya Font</label>
-              <select id="fontFamilySelect" class="form-control">
-                <option value="Outfit">Outfit (Default)</option>
-                <option value="'Fira Code'">Fira Code (Coding)</option>
-                <option value="Arial">Arial</option>
-                <option value="Georgia">Georgia</option>
-                <option value="Courier New">Courier New</option>
-                <option value="Impact">Impact</option>
+            <div class="form-group">
+              <label for="fontFamily">Gaya Huruf</label>
+              <select id="fontFamily" class="form-control" onchange="redrawFavicon()">
+                <option value="Arial">Arial (Sans-Serif)</option>
+                <option value="Georgia">Georgia (Serif)</option>
+                <option value="monospace">Courier (Monospace)</option>
               </select>
             </div>
           </div>
         </div>
 
-        <!-- TAB CONTENT: File Upload Dropzone -->
-        <div id="uploadPane" class="tab-pane">
-          <div class="dropzone" id="dropzone">
-            <i class="fas fa-cloud-upload-alt"></i>
-            <h3>Seret & Lepaskan Berkas Gambar</h3>
-            <p>PNG, JPG, SVG, atau GIF (Saran: resolusi persegi/square)</p>
-            <input type="file" id="imageFileInput" accept="image/*" style="display: none;">
-            <button class="btn btn-secondary btn-icon" style="margin-top: 0.5rem;"><i class="fas fa-folder-open"></i> Pilih Berkas</button>
-          </div>
-        </div>
-
-        <!-- BACKGROUND SHAPES & COLORS SETTINGS -->
-        <div class="panel-title" style="border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 0.5rem;">
-          <i class="fas fa-sliders-h"></i> Pengaturan Bentuk & Gaya
-        </div>
-
-        <div class="control-group">
-          <label>Bentuk Latar Belakang (Shape)</label>
+        <!-- STYLING CONFIGURATIONS -->
+        <div class="form-group">
+          <label>Bentuk Latar Belakang (Background Shape)</label>
           <div class="shape-selector">
-            <label class="shape-option">
-              <input type="radio" name="bgShape" value="circle" checked>
-              <div class="shape-box"><i class="far fa-circle"></i> Lingkaran</div>
+            <label class="shape-btn">
+              <input type="radio" name="bgType" value="circle" checked onchange="redrawFavicon()">
+              <div class="shape-box"><i class="far fa-circle"></i> Bulat</div>
             </label>
-            <label class="shape-option">
-              <input type="radio" name="bgShape" value="rounded">
+            <label class="shape-btn">
+              <input type="radio" name="bgType" value="rounded" onchange="redrawFavicon()">
               <div class="shape-box"><i class="far fa-square-minus"></i> Rounded</div>
             </label>
-            <label class="shape-option">
-              <input type="radio" name="bgShape" value="square">
+            <label class="shape-btn">
+              <input type="radio" name="bgType" value="square" onchange="redrawFavicon()">
               <div class="shape-box"><i class="far fa-square"></i> Kotak</div>
             </label>
-            <label class="shape-option">
-              <input type="radio" name="bgShape" value="transparent">
+            <label class="shape-btn">
+              <input type="radio" name="bgType" value="transparent" onchange="redrawFavicon()">
               <div class="shape-box"><i class="fas fa-ban"></i> Transparan</div>
             </label>
           </div>
         </div>
 
-        <div class="control-row">
-          <div class="control-group">
-            <label for="bgColorInput">Warna Latar Belakang</label>
-            <div class="color-picker-wrapper">
-              <input type="color" id="bgColorInput" class="color-input-picker" value="#3b82f6">
-              <input type="text" id="bgColorText" class="form-control" style="font-family:'Fira Code', monospace; text-transform:uppercase;" value="#3B82F6" placeholder="#FFFFFF">
+        <div class="form-group-row">
+          <div class="form-group">
+            <label for="bgColor">Warna Background</label>
+            <div class="color-picker-group">
+              <input type="color" id="bgColor" class="color-picker" value="#3b82f6" oninput="redrawFavicon()">
+              <input type="text" id="bgColorHex" class="form-control" value="#3b82f6" style="font-family:'Fira Code', monospace; max-width:85px; padding:0.4rem;" oninput="syncColorInput('bgColor', this.value)">
             </div>
           </div>
-          <div class="control-group">
-            <label for="textColorInput">Warna Ikon / Teks</label>
-            <div class="color-picker-wrapper">
-              <input type="color" id="textColorInput" class="color-input-picker" value="#ffffff">
-              <input type="text" id="textColorText" class="form-control" style="font-family:'Fira Code', monospace; text-transform:uppercase;" value="#FFFFFF" placeholder="#000000">
+          <div class="form-group">
+            <label for="textColor">Warna Ikon / Teks</label>
+            <div class="color-picker-group">
+              <input type="color" id="textColor" class="color-picker" value="#ffffff" oninput="redrawFavicon()">
+              <input type="text" id="textColorHex" class="form-control" value="#ffffff" style="font-family:'Fira Code', monospace; max-width:85px; padding:0.4rem;" oninput="syncColorInput('textColor', this.value)">
             </div>
           </div>
         </div>
 
-        <!-- SCALES & OFFSETS CONTROL SLIDERS -->
-        <div class="control-row">
-          <div class="control-group">
-            <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:500;">
-              <label for="iconScaleSlider">Skala Ikon/Gambar</label>
-              <span id="iconScaleVal" style="color:var(--accent-primary);">65%</span>
+        <div class="form-group-row">
+          <div class="form-group">
+            <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:500;">
+              <label for="iconScale">Ukuran Ikon (%)</label>
+              <span id="scaleLabel" style="color:var(--accent-primary);">65%</span>
             </div>
-            <input type="range" id="iconScaleSlider" min="10" max="100" value="65">
+            <input type="range" id="iconScale" min="15" max="95" value="65" oninput="redrawFavicon()">
           </div>
-          <div class="control-group">
-            <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:500;">
-              <label for="borderWidthSlider">Lebar Border Latar</label>
-              <span id="borderWidthVal" style="color:var(--accent-primary);">0%</span>
+          <div class="form-group">
+            <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:500;">
+              <label for="borderWidth">Ketebalan Border (%)</label>
+              <span id="borderWidthLabel" style="color:var(--accent-primary);">0%</span>
             </div>
-            <input type="range" id="borderWidthSlider" min="0" max="15" value="0">
+            <input type="range" id="borderWidth" min="0" max="15" value="0" oninput="redrawFavicon()">
           </div>
         </div>
 
-        <div class="control-row">
-          <div class="control-group">
-            <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:500;">
-              <label for="offsetXSlider">Geser Horisontal (X)</label>
-              <span id="offsetXVal" style="color:var(--accent-primary);">0px</span>
+        <div class="form-group-row">
+          <div class="form-group">
+            <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:500;">
+              <label for="offsetX">Geser X (Horizontal)</label>
+              <span id="offsetXLabel" style="color:var(--accent-primary);">0px</span>
             </div>
-            <input type="range" id="offsetXSlider" min="-40" max="40" value="0">
+            <input type="range" id="offsetX" min="-30" max="30" value="0" oninput="redrawFavicon()">
           </div>
-          <div class="control-group">
-            <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:500;">
-              <label for="offsetYSlider">Geser Vertikal (Y)</label>
-              <span id="offsetYVal" style="color:var(--accent-primary);">0px</span>
+          <div class="form-group">
+            <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:500;">
+              <label for="offsetY">Geser Y (Vertikal)</label>
+              <span id="offsetYLabel" style="color:var(--accent-primary);">0px</span>
             </div>
-            <input type="range" id="offsetYSlider" min="-40" max="40" value="0">
+            <input type="range" id="offsetY" min="-30" max="30" value="0" oninput="redrawFavicon()">
           </div>
         </div>
 
-        <div class="control-group">
-          <label for="borderColorInput">Warna Border</label>
-          <div class="color-picker-wrapper">
-            <input type="color" id="borderColorInput" class="color-input-picker" value="#ffffff" style="width: 100%;">
-          </div>
-        </div>
-
-        <!-- DATABASE / LOCALSTORAGE TEMPLATES -->
-        <div class="panel-title" style="border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 0.5rem;">
-          <i class="fas fa-folder-open"></i> Desain Anda yang Tersimpan
-        </div>
-        <div class="template-grid" id="savedTemplatesGrid">
-          <!-- JS generates local templates list here -->
+        <div class="form-group">
+          <label for="borderColor">Warna Border</label>
+          <input type="color" id="borderColor" class="form-control" value="#ffffff" style="height:38px; padding:0.2rem; cursor:pointer;" oninput="redrawFavicon()">
         </div>
 
       </div>
 
-      <!-- RIGHT PANEL: Previews, Code Integrations & Download -->
+      <!-- RIGHT COLUMN: Previews, Downloads & Integration Codes -->
       <div class="panel">
         <div class="panel-title">
-          <i class="far fa-eye"></i> Tinjauan Favicon (Live Previews)
-        </div>
-        
-        <!-- Live rendering Canvas widget -->
-        <div class="preview-showcase">
-          <div class="preview-canvas-wrapper">
-            <canvas id="mainCanvas"></canvas>
-          </div>
+          <i class="far fa-eye"></i> Tinjauan & Ekspor
         </div>
 
-        <!-- Mockup widgets (browser, google, phone) -->
-        <div class="mockups-grid">
-          <!-- Mock Tab -->
-          <div class="mock-tab">
-            <div class="mock-tab-header">
-              <span class="mock-tab-dot"></span>
-              <span class="mock-tab-dot"></span>
-              <span class="mock-tab-dot"></span>
-            </div>
-            <div class="mock-tab-body">
-              <div class="mock-tab-item">
-                <img id="mockTabFavicon" class="mock-tab-favicon" src="" alt="Favicon preview">
-                <span>Tab Baru</span>
-              </div>
+        <!-- Canvas and Browser mockup -->
+        <div class="form-group-row" style="align-items: center;">
+          <div class="preview-box">
+            <div class="canvas-wrap">
+              <canvas id="faviconCanvas"></canvas>
             </div>
           </div>
-
-          <!-- Mock Google search -->
-          <div class="mock-google">
-            <div class="mock-google-head">
-              <div class="mock-google-favicon-container">
-                <img id="mockGoogleFavicon" class="mock-google-favicon" src="" alt="Google favicon">
+          <div class="form-group" style="gap:0.75rem;">
+            <!-- Tab preview widget -->
+            <div class="mock-tab">
+              <div class="mock-tab-head">
+                <span class="mock-tab-dot"></span>
+                <span class="mock-tab-dot"></span>
+                <span class="mock-tab-dot"></span>
               </div>
-              <div>
-                <div>Nama Situs Anda</div>
-                <div style="color:#5f6368; font-size:0.7rem;">https://situs-anda.com</div>
+              <div class="mock-tab-body">
+                <div class="mock-tab-item">
+                  <img id="tabIconPreview" class="mock-tab-favicon" src="" alt="Icon preview">
+                  <span style="font-weight:600;">Situs Saya</span>
+                </div>
               </div>
             </div>
-            <div class="mock-google-title">Judul Halaman Web - Klik di Sini</div>
-          </div>
-
-          <!-- Mock Phone Desktop -->
-          <div class="mock-phone">
-            <div style="font-size: 0.75rem; color:var(--text-muted); margin-bottom: 0.25rem;"><i class="fas fa-mobile-alt"></i> Mobile Home Screen</div>
-            <div class="mock-phone-grid">
-              <div class="mock-phone-app">
-                <img id="mockPhoneIcon" class="mock-phone-icon" src="" alt="App icon preview">
-                <span>Nama Web</span>
-              </div>
+            
+            <div style="display:flex; flex-direction:column; gap:0.4rem;">
+              <button class="btn btn-primary" onclick="downloadFavicon(32, 'favicon-32x32')"><i class="fas fa-download"></i> Unduh Ikon 32x32 PNG</button>
+              <button class="btn btn-secondary" onclick="downloadFavicon(192, 'favicon-192x192')"><i class="fas fa-download"></i> Unduh Ikon 192x192 PNG</button>
             </div>
           </div>
         </div>
 
-        <!-- DOWNLOAD CONTROL ACTIONS -->
-        <div class="panel-title" style="border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 0.5rem;">
-          <i class="fas fa-download"></i> Ekspor & Unduh
-        </div>
-        
-        <div class="download-options">
-          <!-- Primary Download Zip Package -->
-          <button class="btn btn-primary" onclick="downloadFaviconZip()" style="width:100%;">
-            <i class="fas fa-file-archive" style="font-size:1.1rem;"></i> Unduh Paket Lengkap (.ZIP)
-          </button>
-          
-          <!-- Individual sizes download grid -->
-          <div class="download-presets-grid">
-            <button class="btn btn-secondary btn-icon" onclick="downloadSinglePng(16, 'favicon-16x16')">
-              16x16 PNG
-            </button>
-            <button class="btn btn-secondary btn-icon" onclick="downloadSinglePng(32, 'favicon-32x32')">
-              32x32 PNG
-            </button>
-            <button class="btn btn-secondary btn-icon" onclick="downloadSinglePng(180, 'apple-touch-icon')">
-              Apple Touch (180x180)
-            </button>
-            <button class="btn btn-secondary btn-icon" onclick="downloadSinglePng(192, 'android-chrome-192x192')">
-              PWA Icon (192x192)
-            </button>
-          </div>
+        <!-- INTEGRATION CODE SECTION -->
+        <div class="panel-title" style="margin-top:0.5rem; border-top:1px solid var(--border-color); padding-top:0.75rem;">
+          <i class="fas fa-code"></i> Kode Integrasi (Salin Langsung)
         </div>
 
-        <!-- COPY-PASTE CODES SEGMENT -->
-        <div class="panel-title" style="border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 0.5rem;">
-          <i class="fas fa-code"></i> Cara Pemasangan & Integrasi
-        </div>
-        
         <div class="integration-tabs-wrapper">
-          <!-- Tabs layout selection -->
-          <div class="integration-tabs">
-            <button class="int-tab-btn active" onclick="switchIntegrationTab(this, 'wp')">WordPress (WP)</button>
-            <button class="int-tab-btn" onclick="switchIntegrationTab(this, 'blogger')">Blogspot</button>
-            <button class="int-tab-btn" onclick="switchIntegrationTab(this, 'github')">GitHub Pages / HTML</button>
-            <button class="int-tab-btn" onclick="switchIntegrationTab(this, 'manifest')">Manifest (PWA)</button>
+          <div class="int-tabs">
+            <button class="int-tab active" onclick="switchIntTab(this, 'wp')">WordPress</button>
+            <button class="int-tab" onclick="switchIntTab(this, 'blogger')">Blogger (Blogspot)</button>
+            <button class="int-tab" onclick="switchIntTab(this, 'html')">HTML Biasa / GitHub Pages</button>
           </div>
 
-          <!-- TAB CONTENT: Wordpress -->
-          <div id="wpPane" class="int-pane active">
+          <!-- WordPress integration -->
+          <div id="wpIntPane" class="int-pane active">
             <div class="int-instructions">
-              <strong>Cara Resmi & Paling Mudah (Melalui Menu Kustomisasi):</strong>
+              <strong>Cara Pasang di WordPress (Tanpa Kode):</strong>
               <ol>
-                <li>Unduh berkas <strong>PWA Icon (192x192)</strong> atau <strong>apple-touch-icon</strong> di atas.</li>
-                <li>Masuk ke dasbor WordPress Anda (<code>wp-admin</code>).</li>
-                <li>Buka menu <strong>Appearance</strong> (Tampilan) -> <strong>Customize</strong> (Sesuaikan).</li>
-                <li>Klik pada tab <strong>Site Identity</strong> (Identitas Situs).</li>
-                <li>Di bagian <strong>Site Icon</strong>, klik **Select Site Icon** dan unggah berkas PNG yang sudah Anda unduh.</li>
-                <li>Klik **Publish** di kanan atas. WordPress akan menyebarkannya otomatis di seluruh website.</li>
+                <li>Unduh berkas <strong>192x192 PNG</strong> di atas.</li>
+                <li>Buka dasbor WordPress Anda -> <strong>Tampilan (Appearance)</strong> -> <strong>Sesuaikan (Customize)</strong>.</li>
+                <li>Buka tab **Identitas Situs (Site Identity)**.</li>
+                <li>Di bagian bawah pada **Ikon Situs (Site Icon)**, klik **Pilih Ikon** dan unggah berkas PNG yang baru saja Anda unduh.</li>
+                <li>Klik **Terbitkan (Publish)**. Selesai!</li>
               </ol>
             </div>
           </div>
 
-          <!-- TAB CONTENT: Blogger/Blogspot -->
-          <div id="bloggerPane" class="int-pane">
+          <!-- Blogger integration -->
+          <div id="bloggerIntPane" class="int-pane">
             <div class="int-instructions">
-              <strong>Cara Resmi Pemasangan di Blogger:</strong>
+              <strong>Cara Pasang di Blogger / Blogspot:</strong>
               <ol>
-                <li>Unduh berkas <strong>32x32 PNG</strong> atau <strong>favicon-16x16</strong> dari generator ini.</li>
+                <li>Unduh berkas <strong>32x32 PNG</strong> di atas.</li>
                 <li>Masuk ke dasbor Blogger Anda di <a href="https://blogger.com" target="_blank" style="color:var(--accent-primary);">blogger.com</a>.</li>
-                <li>Pilih blog Anda, lalu klik menu **Setelan (Settings)** di kolom kiri.</li>
-                <li>Di bagian setelan dasar, klik tulisan **Favicon**.</li>
-                <li>Klik tombol **Pilih File (Choose File)** dan unggah berkas gambar PNG tersebut (pastikan ukuran berkas di bawah 100 KB).</li>
-                <li>Klik **Simpan (Save)**. Browser mungkin butuh waktu beberapa jam untuk mereset cache dan memunculkan favicon baru.</li>
+                <li>Klik menu **Setelan (Settings)** di sebelah kiri.</li>
+                <li>Di bawah bagian dasar, klik tulisan **Favicon**.</li>
+                <li>Klik **Pilih File** lalu unggah berkas PNG yang telah diunduh tadi, lalu klik **Simpan**.</li>
               </ol>
             </div>
           </div>
 
-          <!-- TAB CONTENT: Github Pages / Standard HTML -->
-          <div id="githubPane" class="int-pane">
+          <!-- GitHub HTML integration -->
+          <div id="htmlIntPane" class="int-pane">
             <div class="int-instructions">
-              <p>Ekstrak berkas <code>.ZIP</code> yang Anda unduh dari generator ini dan letakkan di folder root repositori proyek HTML Anda (misal di samping berkas <code>index.html</code>). Kemudian tempelkan kode berikut di dalam tag <code>&lt;head&gt;</code> halaman HTML Anda:</p>
+              <p>Simpan file <code>favicon-32x32.png</code> di folder root proyek web Anda (satu folder dengan <code>index.html</code>), lalu tempelkan tag HTML berikut di dalam tag <code>&lt;head&gt;</code> halaman HTML Anda:</p>
             </div>
-            
-            <div class="codebox">
-              <div class="codebox-header">
-                <span class="codebox-lang">HTML</span>
-                <button class="codebox-copy" onclick="copyIntegrationCode('htmlCode', this)"><i class="far fa-copy"></i> Salin Kode</button>
-              </div>
-              <pre><code id="htmlCode">&lt;!-- Favicon Utama untuk Browser Umum --&gt;
-&lt;link rel="shortcut icon" href="favicon.ico" type="image/x-icon"&gt;
-&lt;link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png"&gt;
-&lt;link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png"&gt;
-&lt;link rel="icon" type="image/png" sizes="48x48" href="favicon-48x48.png"&gt;
-
-&lt;!-- Favicon Khusus Apple Touch (iOS Device) --&gt;
-&lt;link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png"&gt;
-
-&lt;!-- Manifest Khusus Android & PWA --&gt;
-&lt;link rel="manifest" href="site.webmanifest"&gt;</code></pre>
+            <div class="code-box">
+              <button class="code-copy-btn" onclick="copySnippet('htmlCodeText', this)"><i class="far fa-copy"></i> Salin</button>
+              <pre><code id="htmlCodeText">&lt;link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png"&gt;
+&lt;link rel="apple-touch-icon" href="favicon-192x192.png"&gt;</code></pre>
             </div>
           </div>
 
-          <!-- TAB CONTENT: Web App Manifest -->
-          <div id="manifestPane" class="int-pane">
-            <div class="int-instructions">
-              <p>Untuk mendukung Progressive Web App (PWA), simpan kode JSON manifest berikut di dalam berkas bernama <code>site.webmanifest</code> di root direktori Anda:</p>
-            </div>
-            
-            <div class="codebox">
-              <div class="codebox-header">
-                <span class="codebox-lang">JSON</span>
-                <button class="codebox-copy" onclick="copyIntegrationCode('manifestCode', this)"><i class="far fa-copy"></i> Salin Kode</button>
-              </div>
-              <pre><code id="manifestCode">{
-  "name": "My Web App",
-  "short_name": "App",
-  "icons": [
-    {
-      "src": "/android-chrome-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/android-chrome-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ],
-  "theme_color": "#3B82F6",
-  "background_color": "#ffffff",
-  "display": "standalone"
-}</code></pre>
-            </div>
-          </div>
-          
         </div>
+
       </div>
 
     </div>
+
   </div>
 
-  <!-- Toast Notification System -->
+  <!-- Toast Notification -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- JSZip CDN for zipping files client-side -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <!-- SELF-CONTAINED JAVASCRIPT LOGIC -->
+  <script>
+    // List of Emojis
+    const EMOJIS = [
+      '🚀', '🔥', '💻', '💡', '🎨', '⚙️', '⭐', '❤️',
+      '👾', '🤖', '👑', '✌️', '😎', '✍️', '🎮', '🔔',
+      '🐱', '🦁', '🦉', '🦄', '🍀', '🌸', '⚡', '☀️',
+      '🍍', '☕', '📱', '🖥️', '🔒', '📊', '🛍️', '⚽'
+    ];
 
-  <!-- App Main Controller Script -->
-  <script src="app.js"></script>
+    // List of vector shapes (drawn using standard SVG paths inside 512x512 canvas coordinates)
+    const VECTOR_SHAPES = {
+      code: 'M150 350 L50 256 L150 162 M362 350 L462 256 L362 162 M220 400 L292 112',
+      star: 'M256 40 L320 170 L462 190 L360 290 L385 430 L256 365 L127 430 L152 290 L50 190 L192 170 Z',
+      heart: 'M256 440 C256 440 80 320 80 180 C80 100 140 60 200 60 C240 60 256 90 256 90 C256 90 272 60 312 60 C372 60 432 100 432 180 C432 320 256 440 256 440 Z',
+      bolt: 'M300 40 L100 260 L240 260 L180 472 L412 216 L272 216 Z',
+      gear: 'M256 180 C214.02 180 180 214.02 180 256 C180 297.98 214.02 330 256 330 C297.98 330 330 297.98 330 256 C330 214.02 297.98 180 256 180 Z M460 220 L412 220 C406 200 396 182 384 166 L418 132 C424 126 424 116 418 110 L382 74 C376 68 366 68 360 74 L326 108 C310 96 292 86 272 80 L272 32 C272 24 264 16 256 16 L204 16 C196 16 188 24 188 32 L188 80 C168 86 150 96 134 108 L100 74 C94 68 84 68 78 74 L42 110 C36 116 36 126 42 132 L76 166 C64 182 54 200 48 220 L0 220 C0 228 0 236 0 244 L0 268 C0 276 0 284 0 292 L48 292 C54 312 64 330 76 346 L42 380 C36 386 36 396 42 402 L78 438 C84 444 94 444 100 438 L134 404 C150 416 168 426 188 432 L188 480 C188 488 196 496 204 496 L256 496 C264 496 272 488 272 480 L272 432 C292 426 310 416 326 404 L360 438 C366 444 376 444 382 438 L418 402 C424 396 424 386 418 380 L384 346 C396 330 406 312 412 292 L460 292 C468 292 476 284 476 276 L476 220 Z',
+      shield: 'M256 40 C144 76 96 120 96 180 C96 310 210 410 256 440 C302 410 416 310 416 180 C416 120 368 76 256 40 Z',
+      cup: 'M80 128 L80 272 C80 342.7 137.3 400 208 400 L224 400 C294.7 400 352 342.7 352 272 L352 128 M352 176 L400 176 C426.5 176 448 197.5 448 224 C448 250.5 426.5 272 400 272 L352 272 M64 80 L448 80 L448 100 L64 100 Z M160 440 L272 440 L272 460 L160 460 Z'
+    };
+
+    // Current State
+    let config = {
+      type: 'emoji', // 'emoji', 'shape', 'text'
+      emoji: '🚀',
+      shapeId: 'code',
+      text: 'F',
+      fontFamily: 'Arial',
+      bgType: 'circle', // 'circle', 'rounded', 'square', 'transparent'
+      bgColor: '#3b82f6',
+      textColor: '#ffffff',
+      iconSize: 65,
+      borderWidth: 0,
+      borderColor: '#ffffff',
+      offsetX: 0,
+      offsetY: 0
+    };
+
+    // Show toast message
+    function toast(msg) {
+      const container = document.getElementById('toastContainer');
+      const box = document.createElement('div');
+      box.className = 'toast';
+      box.innerHTML = `<i class="fas fa-check-circle"></i><span>${msg}</span>`;
+      container.appendChild(box);
+      setTimeout(() => {
+        box.style.animation = 'fadeOut 0.3s forwards';
+        setTimeout(() => box.remove(), 300);
+      }, 2500);
+    }
+
+    // Switch Editor Tab
+    function switchTab(btn, tabId) {
+      // Toggle nav
+      document.querySelectorAll('.tabs-nav .tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Toggle panes
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      document.getElementById(tabId + 'Pane').classList.add('active');
+
+      config.type = tabId;
+      redrawFavicon();
+    }
+
+    // Switch integration guide tabs
+    function switchIntTab(btn, tabId) {
+      document.querySelectorAll('.int-tabs .int-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      document.querySelectorAll('.int-pane').forEach(p => p.classList.remove('active'));
+      document.getElementById(tabId + 'IntPane').classList.add('active');
+    }
+
+    // Copy to clipboard
+    function copySnippet(elementId, btn) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const origText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> Disalin!';
+        toast('Kode integrasi disalin!');
+        setTimeout(() => btn.innerHTML = origText, 1500);
+      });
+    }
+
+    // Sync input color with hex text box
+    function syncColorInput(configKey, hexValue) {
+      if (hexValue.match(/^#[0-9A-F]{6}$/i)) {
+        document.getElementById(configKey).value = hexValue;
+        redrawFavicon();
+      }
+    }
+
+    // Initialize Emojis Grid
+    function initEmojiGrid() {
+      const container = document.getElementById('emojiPresets');
+      container.innerHTML = '';
+      EMOJIS.forEach(emoji => {
+        const div = document.createElement('div');
+        div.className = 'preset-item';
+        if (config.emoji === emoji) div.classList.add('selected');
+        div.innerText = emoji;
+        div.addEventListener('click', () => {
+          document.querySelectorAll('#emojiPresets .preset-item').forEach(el => el.classList.remove('selected'));
+          div.classList.add('selected');
+          config.emoji = emoji;
+          redrawFavicon();
+        });
+        container.appendChild(div);
+      });
+    }
+
+    // Initialize Vektor Shapes Grid
+    function initShapeGrid() {
+      const container = document.getElementById('shapePresets');
+      container.innerHTML = '';
+      Object.keys(VECTOR_SHAPES).forEach(key => {
+        const div = document.createElement('div');
+        div.className = 'preset-item';
+        if (config.shapeId === key) div.classList.add('selected');
+        
+        // Draw tiny vector shape inside
+        div.innerHTML = `
+          <svg viewBox="0 0 512 512" style="width:20px; height:20px; stroke:currentColor; stroke-width:40; stroke-linecap:round; stroke-linejoin:round; fill:none;">
+            <path d="${VECTOR_SHAPES[key]}"/>
+          </svg>
+        `;
+        
+        div.addEventListener('click', () => {
+          document.querySelectorAll('#shapePresets .preset-item').forEach(el => el.classList.remove('selected'));
+          div.classList.add('selected');
+          config.shapeId = key;
+          redrawFavicon();
+        });
+        container.appendChild(div);
+      });
+    }
+
+    // Fetch values from customizer elements to config state
+    function loadConfigFromInputs() {
+      config.bgColor = document.getElementById('bgColor').value;
+      config.textColor = document.getElementById('textColor').value;
+      config.bgType = document.querySelector('input[name="bgType"]:checked').value;
+      
+      config.iconSize = parseInt(document.getElementById('iconScale').value);
+      config.borderWidth = parseInt(document.getElementById('borderWidth').value);
+      config.offsetX = parseInt(document.getElementById('offsetX').value);
+      config.offsetY = parseInt(document.getElementById('offsetY').value);
+      config.borderColor = document.getElementById('borderColor').value;
+      
+      config.text = document.getElementById('txtInput').value;
+      config.fontFamily = document.getElementById('fontFamily').value;
+
+      // Update color text box indicators
+      document.getElementById('bgColorHex').value = config.bgColor.toUpperCase();
+      document.getElementById('textColorHex').value = config.textColor.toUpperCase();
+
+      // Update slider numbers
+      document.getElementById('scaleLabel').innerText = config.iconSize + '%';
+      document.getElementById('borderWidthLabel').innerText = config.borderWidth + '%';
+      document.getElementById('offsetXLabel').innerText = config.offsetX + 'px';
+      document.getElementById('offsetYLabel').innerText = config.offsetY + 'px';
+    }
+
+    // Core Drawing function
+    function drawFavicon(canvas, size) {
+      const ctx = canvas.getContext('2d');
+      canvas.width = size;
+      canvas.height = size;
+      ctx.clearRect(0, 0, size, size);
+
+      // Draw background
+      if (config.bgType !== 'transparent') {
+        ctx.beginPath();
+        ctx.fillStyle = config.bgColor;
+        
+        if (config.bgType === 'circle') {
+          ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+        } else if (config.bgType === 'rounded') {
+          const r = size * 0.22;
+          ctx.moveTo(r, 0);
+          ctx.lineTo(size - r, 0);
+          ctx.quadraticCurveTo(size, 0, size, r);
+          ctx.lineTo(size, size - r);
+          ctx.quadraticCurveTo(size, size, size - r, size);
+          ctx.lineTo(r, size);
+          ctx.quadraticCurveTo(0, size, 0, size - r);
+          ctx.lineTo(0, r);
+          ctx.quadraticCurveTo(0, 0, r, 0);
+        } else if (config.bgType === 'square') {
+          ctx.rect(0, 0, size, size);
+        }
+        ctx.fill();
+        ctx.closePath();
+
+        // Draw border if set
+        if (config.borderWidth > 0) {
+          ctx.beginPath();
+          ctx.lineWidth = (config.borderWidth / 100) * size;
+          ctx.strokeStyle = config.borderColor;
+          const offset = ctx.lineWidth / 2;
+          
+          if (config.bgType === 'circle') {
+            ctx.arc(size / 2, size / 2, (size / 2) - offset, 0, Math.PI * 2);
+          } else if (config.bgType === 'rounded') {
+            const r = size * 0.22;
+            ctx.moveTo(r, offset);
+            ctx.lineTo(size - r, offset);
+            ctx.quadraticCurveTo(size - offset, offset, size - offset, r);
+            ctx.lineTo(size - offset, size - r);
+            ctx.quadraticCurveTo(size - offset, size - offset, size - r, size - offset);
+            ctx.lineTo(r, size - offset);
+            ctx.quadraticCurveTo(offset, size - offset, offset, size - r);
+            ctx.lineTo(offset, r);
+            ctx.quadraticCurveTo(offset, offset, r, offset);
+          } else if (config.bgType === 'square') {
+            ctx.rect(offset, offset, size - ctx.lineWidth, size - ctx.lineWidth);
+          }
+          ctx.stroke();
+          ctx.closePath();
+        }
+      }
+
+      // Calculate relative coordinate centers based on slider shifts
+      const cx = (size / 2) + ((config.offsetX / 100) * size);
+      const cy = (size / 2) + ((config.offsetY / 100) * size);
+
+      // Draw foreground icon
+      if (config.type === 'emoji') {
+        const fontSize = size * (config.iconSize / 100);
+        ctx.font = `${fontSize}px Arial, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(config.emoji, cx, cy + (fontSize * 0.05)); // Slight offset to center emoji vertical alignment
+        
+      } else if (config.type === 'text') {
+        const fontSize = size * (config.iconSize / 100) * 0.85;
+        ctx.font = `800 ${fontSize}px ${config.fontFamily}, sans-serif`;
+        ctx.fillStyle = config.textColor;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(config.text.toUpperCase(), cx, cy);
+        
+      } else if (config.type === 'shape') {
+        ctx.save();
+        ctx.translate(cx, cy);
+        const scale = (config.iconSize / 100) * (size / 512); // Standard coordinates defined at 512
+        ctx.scale(scale, scale);
+        ctx.translate(-256, -256);
+        
+        const path = new Path2D(VECTOR_SHAPES[config.shapeId]);
+        ctx.strokeStyle = config.textColor;
+        ctx.lineWidth = 42;
+        ctx.stroke(path);
+        
+        if (['star', 'heart', 'bolt', 'shield'].includes(config.shapeId)) {
+          ctx.fillStyle = config.textColor;
+          ctx.fill(path);
+        }
+        ctx.restore();
+      }
+    }
+
+    // Refresh UI Preview Canvas and Browser Mockup Icon
+    function redrawFavicon() {
+      loadConfigFromInputs();
+      
+      const mainCanvas = document.getElementById('faviconCanvas');
+      drawFavicon(mainCanvas, 256);
+
+      // Update mock tab favicon
+      document.getElementById('tabIconPreview').src = mainCanvas.toDataURL('image/png');
+    }
+
+    // Trigger PNG file download
+    function downloadFavicon(size, filename) {
+      const tempCanvas = document.createElement('canvas');
+      drawFavicon(tempCanvas, size);
+      
+      const dataUrl = tempCanvas.toDataURL('image/png');
+      const element = document.createElement('a');
+      element.setAttribute('href', dataUrl);
+      element.setAttribute('download', `${filename}.png`);
+      element.style.display = 'none';
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+      toast(`Ikon ${size}x${size} berhasil diunduh!`);
+    }
+
+    // Run when DOM loads
+    window.addEventListener('DOMContentLoaded', () => {
+      initEmojiGrid();
+      initShapeGrid();
+      redrawFavicon();
+    });
+  </script>
 
 </body>
 </html>
