@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Favicon Generator - PWA, WordPress, Blogspot, & HTML Pages</title>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app-wrapper">
+    
+    <!-- App Header -->
+    <header class="app-header">
+      <div class="header-logo">
+        <i class="fas fa-icons"></i>
+        <div class="header-title">
+          <h1>Universal Favicon Generator</h1>
+          <p>Buat favicon cantik dari Emojis, Teks, Shape, atau Gambar Kustom untuk berbagai CMS & HTML.</p>
+        </div>
+      </div>
+      <div>
+        <button class="btn btn-primary" onclick="saveCurrentTemplate()">
+          <i class="fas fa-save"></i> Simpan Desain
+        </button>
+      </div>
+    </header>
+
+    <!-- Workspace Grid -->
+    <div class="workspace-grid">
+      
+      <!-- LEFT PANEL: Editor & Configurations -->
+      <div class="panel">
+        <div class="panel-title">
+          <i class="fas fa-palette"></i> Desainer Favicon
+        </div>
+        
+        <!-- Editor Tabs Navigation -->
+        <div class="creator-tabs">
+          <button class="tab-btn active" onclick="switchEditorTab('emoji')">
+            <i class="far fa-smile"></i> Emoji
+          </button>
+          <button class="tab-btn" onclick="switchEditorTab('preset')">
+            <i class="fas fa-shapes"></i> Preset Shape
+          </button>
+          <button class="tab-btn" onclick="switchEditorTab('text')">
+            <i class="fas fa-font"></i> Teks/Huruf
+          </button>
+          <button class="tab-btn" onclick="switchEditorTab('upload')">
+            <i class="fas fa-upload"></i> Unggah Gambar
+          </button>
+        </div>
+
+        <!-- TAB CONTENT: Emojis Preset Grid -->
+        <div id="emojiPane" class="tab-pane active">
+          <div class="icon-preset-container">
+            <label style="font-size:0.85rem; font-weight:600; color:var(--text-secondary);">Pilih Emoji Presets:</label>
+            <div class="icon-presets-scroll" id="emojiPresetsGrid">
+              <!-- JS generates emojis list here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB CONTENT: Presets SVG Grid -->
+        <div id="presetPane" class="tab-pane">
+          <div class="icon-preset-container">
+            <label style="font-size:0.85rem; font-weight:600; color:var(--text-secondary);">Pilih Simbol / Shape:</label>
+            <div class="icon-presets-scroll" id="presetIconsGrid">
+              <!-- JS generates SVG icons list here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB CONTENT: Custom Letters/Text -->
+        <div id="textPane" class="tab-pane">
+          <div class="control-row">
+            <div class="control-group">
+              <label for="textLetters">Teks (Maks 3 Huruf)</label>
+              <input type="text" id="textLetters" class="form-control" maxlength="3" value="GO" placeholder="Contoh: A, WP, GO">
+            </div>
+            <div class="control-group">
+              <label for="fontFamilySelect">Gaya Font</label>
+              <select id="fontFamilySelect" class="form-control">
+                <option value="Outfit">Outfit (Default)</option>
+                <option value="'Fira Code'">Fira Code (Coding)</option>
+                <option value="Arial">Arial</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Courier New">Courier New</option>
+                <option value="Impact">Impact</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB CONTENT: File Upload Dropzone -->
+        <div id="uploadPane" class="tab-pane">
+          <div class="dropzone" id="dropzone">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <h3>Seret & Lepaskan Berkas Gambar</h3>
+            <p>PNG, JPG, SVG, atau GIF (Saran: resolusi persegi/square)</p>
+            <input type="file" id="imageFileInput" accept="image/*" style="display: none;">
+            <button class="btn btn-secondary btn-icon" style="margin-top: 0.5rem;"><i class="fas fa-folder-open"></i> Pilih Berkas</button>
+          </div>
+        </div>
+
+        <!-- BACKGROUND SHAPES & COLORS SETTINGS -->
+        <div class="panel-title" style="border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 0.5rem;">
+          <i class="fas fa-sliders-h"></i> Pengaturan Bentuk & Gaya
+        </div>
+
+        <div class="control-group">
+          <label>Bentuk Latar Belakang (Shape)</label>
+          <div class="shape-selector">
+            <label class="shape-option">
+              <input type="radio" name="bgShape" value="circle" checked>
+              <div class="shape-box"><i class="far fa-circle"></i> Lingkaran</div>
+            </label>
+            <label class="shape-option">
+              <input type="radio" name="bgShape" value="rounded">
+              <div class="shape-box"><i class="far fa-square-minus"></i> Rounded</div>
+            </label>
+            <label class="shape-option">
+              <input type="radio" name="bgShape" value="square">
+              <div class="shape-box"><i class="far fa-square"></i> Kotak</div>
+            </label>
+            <label class="shape-option">
+              <input type="radio" name="bgShape" value="transparent">
+              <div class="shape-box"><i class="fas fa-ban"></i> Transparan</div>
+            </label>
+          </div>
+        </div>
+
+        <div class="control-row">
+          <div class="control-group">
+            <label for="bgColorInput">Warna Latar Belakang</label>
+            <div class="color-picker-wrapper">
+              <input type="color" id="bgColorInput" class="color-input-picker" value="#3b82f6">
+              <input type="text" id="bgColorText" class="form-control" style="font-family:'Fira Code', monospace; text-transform:uppercase;" value="#3B82F6" placeholder="#FFFFFF">
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="textColorInput">Warna Ikon / Teks</label>
+            <div class="color-picker-wrapper">
+              <input type="color" id="textColorInput" class="color-input-picker" value="#ffffff">
+              <input type="text" id="textColorText" class="form-control" style="font-family:'Fira Code', monospace; text-transform:uppercase;" value="#FFFFFF" placeholder="#000000">
+            </div>
+          </div>
+        </div>
+
+        <!-- SCALES & OFFSETS CONTROL SLIDERS -->
+        <div class="control-row">
+          <div class="control-group">
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:500;">
+              <label for="iconScaleSlider">Skala Ikon/Gambar</label>
+              <span id="iconScaleVal" style="color:var(--accent-primary);">65%</span>
+            </div>
+            <input type="range" id="iconScaleSlider" min="10" max="100" value="65">
+          </div>
+          <div class="control-group">
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:500;">
+              <label for="borderWidthSlider">Lebar Border Latar</label>
+              <span id="borderWidthVal" style="color:var(--accent-primary);">0%</span>
+            </div>
+            <input type="range" id="borderWidthSlider" min="0" max="15" value="0">
+          </div>
+        </div>
+
+        <div class="control-row">
+          <div class="control-group">
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:500;">
+              <label for="offsetXSlider">Geser Horisontal (X)</label>
+              <span id="offsetXVal" style="color:var(--accent-primary);">0px</span>
+            </div>
+            <input type="range" id="offsetXSlider" min="-40" max="40" value="0">
+          </div>
+          <div class="control-group">
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:500;">
+              <label for="offsetYSlider">Geser Vertikal (Y)</label>
+              <span id="offsetYVal" style="color:var(--accent-primary);">0px</span>
+            </div>
+            <input type="range" id="offsetYSlider" min="-40" max="40" value="0">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label for="borderColorInput">Warna Border</label>
+          <div class="color-picker-wrapper">
+            <input type="color" id="borderColorInput" class="color-input-picker" value="#ffffff" style="width: 100%;">
+          </div>
+        </div>
+
+        <!-- DATABASE / LOCALSTORAGE TEMPLATES -->
+        <div class="panel-title" style="border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 0.5rem;">
+          <i class="fas fa-folder-open"></i> Desain Anda yang Tersimpan
+        </div>
+        <div class="template-grid" id="savedTemplatesGrid">
+          <!-- JS generates local templates list here -->
+        </div>
+
+      </div>
+
+      <!-- RIGHT PANEL: Previews, Code Integrations & Download -->
+      <div class="panel">
+        <div class="panel-title">
+          <i class="far fa-eye"></i> Tinjauan Favicon (Live Previews)
+        </div>
+        
+        <!-- Live rendering Canvas widget -->
+        <div class="preview-showcase">
+          <div class="preview-canvas-wrapper">
+            <canvas id="mainCanvas"></canvas>
+          </div>
+        </div>
+
+        <!-- Mockup widgets (browser, google, phone) -->
+        <div class="mockups-grid">
+          <!-- Mock Tab -->
+          <div class="mock-tab">
+            <div class="mock-tab-header">
+              <span class="mock-tab-dot"></span>
+              <span class="mock-tab-dot"></span>
+              <span class="mock-tab-dot"></span>
+            </div>
+            <div class="mock-tab-body">
+              <div class="mock-tab-item">
+                <img id="mockTabFavicon" class="mock-tab-favicon" src="" alt="Favicon preview">
+                <span>Tab Baru</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mock Google search -->
+          <div class="mock-google">
+            <div class="mock-google-head">
+              <div class="mock-google-favicon-container">
+                <img id="mockGoogleFavicon" class="mock-google-favicon" src="" alt="Google favicon">
+              </div>
+              <div>
+                <div>Nama Situs Anda</div>
+                <div style="color:#5f6368; font-size:0.7rem;">https://situs-anda.com</div>
+              </div>
+            </div>
+            <div class="mock-google-title">Judul Halaman Web - Klik di Sini</div>
+          </div>
+
+          <!-- Mock Phone Desktop -->
+          <div class="mock-phone">
+            <div style="font-size: 0.75rem; color:var(--text-muted); margin-bottom: 0.25rem;"><i class="fas fa-mobile-alt"></i> Mobile Home Screen</div>
+            <div class="mock-phone-grid">
+              <div class="mock-phone-app">
+                <img id="mockPhoneIcon" class="mock-phone-icon" src="" alt="App icon preview">
+                <span>Nama Web</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DOWNLOAD CONTROL ACTIONS -->
+        <div class="panel-title" style="border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 0.5rem;">
+          <i class="fas fa-download"></i> Ekspor & Unduh
+        </div>
+        
+        <div class="download-options">
+          <!-- Primary Download Zip Package -->
+          <button class="btn btn-primary" onclick="downloadFaviconZip()" style="width:100%;">
+            <i class="fas fa-file-archive" style="font-size:1.1rem;"></i> Unduh Paket Lengkap (.ZIP)
+          </button>
+          
+          <!-- Individual sizes download grid -->
+          <div class="download-presets-grid">
+            <button class="btn btn-secondary btn-icon" onclick="downloadSinglePng(16, 'favicon-16x16')">
+              16x16 PNG
+            </button>
+            <button class="btn btn-secondary btn-icon" onclick="downloadSinglePng(32, 'favicon-32x32')">
+              32x32 PNG
+            </button>
+            <button class="btn btn-secondary btn-icon" onclick="downloadSinglePng(180, 'apple-touch-icon')">
+              Apple Touch (180x180)
+            </button>
+            <button class="btn btn-secondary btn-icon" onclick="downloadSinglePng(192, 'android-chrome-192x192')">
+              PWA Icon (192x192)
+            </button>
+          </div>
+        </div>
+
+        <!-- COPY-PASTE CODES SEGMENT -->
+        <div class="panel-title" style="border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 0.5rem;">
+          <i class="fas fa-code"></i> Cara Pemasangan & Integrasi
+        </div>
+        
+        <div class="integration-tabs-wrapper">
+          <!-- Tabs layout selection -->
+          <div class="integration-tabs">
+            <button class="int-tab-btn active" onclick="switchIntegrationTab('wp')">WordPress (WP)</button>
+            <button class="int-tab-btn" onclick="switchIntegrationTab('blogger')">Blogspot</button>
+            <button class="int-tab-btn" onclick="switchIntegrationTab('github')">GitHub Pages / HTML</button>
+            <button class="int-tab-btn" onclick="switchIntegrationTab('manifest')">Manifest (PWA)</button>
+          </div>
+
+          <!-- TAB CONTENT: Wordpress -->
+          <div id="wpPane" class="int-pane active">
+            <div class="int-instructions">
+              <strong>Cara Resmi & Paling Mudah (Melalui Menu Kustomisasi):</strong>
+              <ol>
+                <li>Unduh berkas <strong>PWA Icon (192x192)</strong> atau <strong>apple-touch-icon</strong> di atas.</li>
+                <li>Masuk ke dasbor WordPress Anda (<code>wp-admin</code>).</li>
+                <li>Buka menu <strong>Appearance</strong> (Tampilan) -> <strong>Customize</strong> (Sesuaikan).</li>
+                <li>Klik pada tab <strong>Site Identity</strong> (Identitas Situs).</li>
+                <li>Di bagian <strong>Site Icon</strong>, klik **Select Site Icon** dan unggah berkas PNG yang sudah Anda unduh.</li>
+                <li>Klik **Publish** di kanan atas. WordPress akan menyebarkannya otomatis di seluruh website.</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- TAB CONTENT: Blogger/Blogspot -->
+          <div id="bloggerPane" class="int-pane">
+            <div class="int-instructions">
+              <strong>Cara Resmi Pemasangan di Blogger:</strong>
+              <ol>
+                <li>Unduh berkas <strong>32x32 PNG</strong> atau <strong>favicon-16x16</strong> dari generator ini.</li>
+                <li>Masuk ke dasbor Blogger Anda di <a href="https://blogger.com" target="_blank" style="color:var(--accent-primary);">blogger.com</a>.</li>
+                <li>Pilih blog Anda, lalu klik menu **Setelan (Settings)** di kolom kiri.</li>
+                <li>Di bagian setelan dasar, klik tulisan **Favicon**.</li>
+                <li>Klik tombol **Pilih File (Choose File)** dan unggah berkas gambar PNG tersebut (pastikan ukuran berkas di bawah 100 KB).</li>
+                <li>Klik **Simpan (Save)**. Browser mungkin butuh waktu beberapa jam untuk mereset cache dan memunculkan favicon baru.</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- TAB CONTENT: Github Pages / Standard HTML -->
+          <div id="githubPane" class="int-pane">
+            <div class="int-instructions">
+              <p>Ekstrak berkas <code>.ZIP</code> yang Anda unduh dari generator ini dan letakkan di folder root repositori proyek HTML Anda (misal di samping berkas <code>index.html</code>). Kemudian tempelkan kode berikut di dalam tag <code>&lt;head&gt;</code> halaman HTML Anda:</p>
+            </div>
+            
+            <div class="codebox">
+              <div class="codebox-header">
+                <span class="codebox-lang">HTML</span>
+                <button class="codebox-copy" onclick="copyIntegrationCode('htmlCode', this)"><i class="far fa-copy"></i> Salin Kode</button>
+              </div>
+              <pre><code id="htmlCode">&lt;!-- Favicon Utama untuk Browser Umum --&gt;
+&lt;link rel="shortcut icon" href="favicon.ico" type="image/x-icon"&gt;
+&lt;link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png"&gt;
+&lt;link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png"&gt;
+&lt;link rel="icon" type="image/png" sizes="48x48" href="favicon-48x48.png"&gt;
+
+&lt;!-- Favicon Khusus Apple Touch (iOS Device) --&gt;
+&lt;link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png"&gt;
+
+&lt;!-- Manifest Khusus Android & PWA --&gt;
+&lt;link rel="manifest" href="site.webmanifest"&gt;</code></pre>
+            </div>
+          </div>
+
+          <!-- TAB CONTENT: Web App Manifest -->
+          <div id="manifestPane" class="int-pane">
+            <div class="int-instructions">
+              <p>Untuk mendukung Progressive Web App (PWA), simpan kode JSON manifest berikut di dalam berkas bernama <code>site.webmanifest</code> di root direktori Anda:</p>
+            </div>
+            
+            <div class="codebox">
+              <div class="codebox-header">
+                <span class="codebox-lang">JSON</span>
+                <button class="codebox-copy" onclick="copyIntegrationCode('manifestCode', this)"><i class="far fa-copy"></i> Salin Kode</button>
+              </div>
+              <pre><code id="manifestCode">{
+  "name": "My Web App",
+  "short_name": "App",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#3B82F6",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}</code></pre>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification System -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- JSZip CDN for zipping files client-side -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <!-- App Main Controller Script -->
+  <script src="app.js"></script>
+
+</body>
+</html>
