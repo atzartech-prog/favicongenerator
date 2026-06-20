@@ -41,18 +41,21 @@
         </div>
         
         <!-- Editor Tabs Navigation -->
-        <div class="creator-tabs">
-          <button class="tab-btn active" onclick="switchEditorTab('emoji')">
+        <div class="creator-tabs" style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
+          <button class="tab-btn active" onclick="switchEditorTab(this, 'emoji')">
             <i class="far fa-smile"></i> Emoji
           </button>
-          <button class="tab-btn" onclick="switchEditorTab('preset')">
+          <button class="tab-btn" onclick="switchEditorTab(this, 'fontawesome')">
+            <i class="fab fa-font-awesome"></i> FontAwesome
+          </button>
+          <button class="tab-btn" onclick="switchEditorTab(this, 'preset')">
             <i class="fas fa-shapes"></i> Preset Shape
           </button>
-          <button class="tab-btn" onclick="switchEditorTab('text')">
-            <i class="fas fa-font"></i> Teks/Huruf
+          <button class="tab-btn" onclick="switchEditorTab(this, 'text')">
+            <i class="fas fa-font"></i> Teks
           </button>
-          <button class="tab-btn" onclick="switchEditorTab('upload')">
-            <i class="fas fa-upload"></i> Unggah Gambar
+          <button class="tab-btn" onclick="switchEditorTab(this, 'upload')">
+            <i class="fas fa-upload"></i> Unggah
           </button>
         </div>
 
@@ -62,6 +65,16 @@
             <label style="font-size:0.85rem; font-weight:600; color:var(--text-secondary);">Pilih Emoji Presets:</label>
             <div class="icon-presets-scroll" id="emojiPresetsGrid">
               <!-- JS generates emojis list here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB CONTENT: FontAwesome Icon Grid -->
+        <div id="fontawesomePane" class="tab-pane">
+          <div class="icon-preset-container">
+            <label style="font-size:0.85rem; font-weight:600; color:var(--text-secondary);">Pilih Ikon FontAwesome:</label>
+            <div class="icon-presets-scroll" id="faPresetsGrid">
+              <!-- JS generates FontAwesome list here -->
             </div>
           </div>
         </div>
@@ -296,10 +309,10 @@
         <div class="integration-tabs-wrapper">
           <!-- Tabs layout selection -->
           <div class="integration-tabs">
-            <button class="int-tab-btn active" onclick="switchIntegrationTab('wp')">WordPress (WP)</button>
-            <button class="int-tab-btn" onclick="switchIntegrationTab('blogger')">Blogspot</button>
-            <button class="int-tab-btn" onclick="switchIntegrationTab('github')">GitHub Pages / HTML</button>
-            <button class="int-tab-btn" onclick="switchIntegrationTab('manifest')">Manifest (PWA)</button>
+            <button class="int-tab-btn active" onclick="switchIntegrationTab(this, 'wp')">WordPress (WP)</button>
+            <button class="int-tab-btn" onclick="switchIntegrationTab(this, 'blogger')">Blogspot</button>
+            <button class="int-tab-btn" onclick="switchIntegrationTab(this, 'github')">GitHub Pages / HTML</button>
+            <button class="int-tab-btn" onclick="switchIntegrationTab(this, 'manifest')">Manifest (PWA)</button>
           </div>
 
           <!-- TAB CONTENT: Wordpress -->

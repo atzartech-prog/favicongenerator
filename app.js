@@ -27,14 +27,51 @@ const PRESET_SVGS = {
   cup: 'M80 128 L80 272 C80 342.7 137.3 400 208 400 L224 400 C294.7 400 352 342.7 352 272 L352 128 M352 176 L400 176 C426.5 176 448 197.5 448 224 C448 250.5 426.5 272 400 272 L352 272 M64 80 L448 80 L448 100 L64 100 Z M160 440 L272 440 L272 460 L160 460 Z'
 };
 
+// Preset FontAwesome Icons (Unicode for Solid Free icons)
+const FA_ICONS = [
+  { name: 'code', icon: 'fa-code', unicode: '\uf121' },
+  { name: 'star', icon: 'fa-star', unicode: '\uf005' },
+  { name: 'heart', icon: 'fa-heart', unicode: '\uf004' },
+  { name: 'globe', icon: 'fa-globe', unicode: '\uf0ac' },
+  { name: 'gear', icon: 'fa-cog', unicode: '\uf013' },
+  { name: 'bolt', icon: 'fa-bolt', unicode: '\uf0e7' },
+  { name: 'shield', icon: 'fa-shield-halved', unicode: '\uf304' },
+  { name: 'terminal', icon: 'fa-terminal', unicode: '\uf120' },
+  { name: 'bell', icon: 'fa-bell', unicode: '\uf0f3' },
+  { name: 'coffee', icon: 'fa-coffee', unicode: '\uf0f4' },
+  { name: 'fire', icon: 'fa-fire', unicode: '\uf06d' },
+  { name: 'ghost', icon: 'fa-ghost', unicode: '\uf6e2' },
+  { name: 'robot', icon: 'fa-robot', unicode: '\uf548' },
+  { name: 'crown', icon: 'fa-crown', unicode: '\uf521' },
+  { name: 'gamepad', icon: 'fa-gamepad', unicode: '\uf11b' },
+  { name: 'lock', icon: 'fa-lock', unicode: '\uf023' },
+  { name: 'key', icon: 'fa-key', unicode: '\uf084' },
+  { name: 'chart-bar', icon: 'fa-chart-bar', unicode: '\uf080' },
+  { name: 'shopping-cart', icon: 'fa-shopping-cart', unicode: '\uf07a' },
+  { name: 'music', icon: 'fa-music', unicode: '\uf001' },
+  { name: 'envelope', icon: 'fa-envelope', unicode: '\uf0e0' },
+  { name: 'home', icon: 'fa-home', unicode: '\uf015' },
+  { name: 'user', icon: 'fa-user', unicode: '\uf007' },
+  { name: 'book', icon: 'fa-book', unicode: '\uf02d' },
+  { name: 'cloud', icon: 'fa-cloud', unicode: '\uf0c2' },
+  { name: 'camera', icon: 'fa-camera', unicode: '\uf030' },
+  { name: 'paw', icon: 'fa-paw', unicode: '\uf1b0' },
+  { name: 'search', icon: 'fa-search', unicode: '\uf002' },
+  { name: 'trash', icon: 'fa-trash', unicode: '\uf2ed' },
+  { name: 'pen', icon: 'fa-pen', unicode: '\uf304' },
+  { name: 'image', icon: 'fa-image', unicode: '\uf03e' },
+  { name: 'check', icon: 'fa-check', unicode: '\uf00c' }
+];
+
 // Global App State
 let state = {
   currentConfig: {
-    type: 'emoji', // 'emoji', 'text', 'preset', 'upload'
+    type: 'emoji', // 'emoji', 'text', 'preset', 'upload', 'fontawesome'
     emoji: '🚀',
     text: 'GO',
     fontFamily: 'Outfit',
     presetId: 'code',
+    fontAwesomeIcon: '\uf121', // Default to fa-code
     bgType: 'circle', // 'circle', 'square', 'rounded', 'transparent'
     bgColor: '#3b82f6',
     textColor: '#ffffff',
@@ -128,6 +165,30 @@ function renderPresetSvgs() {
   });
 }
 
+// Render FontAwesome Icons List in UI
+function renderPresetFaIcons() {
+  const container = document.getElementById('faPresetsGrid');
+  if (!container) return;
+  container.innerHTML = '';
+  FA_ICONS.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'preset-icon-item';
+    if (state.currentConfig.type === 'fontawesome' && state.currentConfig.fontAwesomeIcon === item.unicode) {
+      el.classList.add('selected');
+    }
+    el.innerHTML = `<i class="fas ${item.icon}"></i>`;
+    el.addEventListener('click', () => {
+      state.currentConfig.type = 'fontawesome';
+      state.currentConfig.fontAwesomeIcon = item.unicode;
+      highlightTab('fontawesome');
+      updateAllSelectedStates();
+      updateAllPreviews();
+      saveDraftToLocalStorage();
+    });
+    container.appendChild(el);
+  });
+}
+
 function updateAllSelectedStates() {
   // Update emoji highlights
   document.querySelectorAll('#emojiPresetsGrid .preset-icon-item').forEach(el => {
@@ -138,6 +199,9 @@ function updateAllSelectedStates() {
     }
   });
 
+  // Update FontAwesome highlights
+  renderPresetFaIcons();
+
   // Update SVG highlights
   renderPresetSvgs();
 }
@@ -147,18 +211,35 @@ function highlightTab(tabId) {
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.classList.remove('active');
   });
-  const activeBtn = document.querySelector(`.tab-btn[onclick="switchEditorTab('${tabId}')"]`);
+  const activeBtn = document.querySelector(`.tab-btn[onclick*="'${tabId}'"]`);
   if (activeBtn) activeBtn.classList.add('active');
 
   document.querySelectorAll('.tab-pane').forEach(pane => {
     pane.classList.remove('active');
   });
-  document.getElementById(tabId + 'Pane').classList.add('active');
+  const pane = document.getElementById(tabId + 'Pane');
+  if (pane) pane.classList.add('active');
 }
 
-function switchEditorTab(tabId) {
+function switchEditorTab(element, tabId) {
   state.currentConfig.type = tabId;
-  highlightTab(tabId);
+  
+  document.querySelectorAll('.creator-tabs .tab-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  if (element) {
+    element.classList.add('active');
+  } else {
+    const activeBtn = document.querySelector(`.tab-btn[onclick*="'${tabId}'"]`);
+    if (activeBtn) activeBtn.classList.add('active');
+  }
+
+  document.querySelectorAll('.tab-pane').forEach(pane => {
+    pane.classList.remove('active');
+  });
+  const pane = document.getElementById(tabId + 'Pane');
+  if (pane) pane.classList.add('active');
+
   updateAllPreviews();
   saveDraftToLocalStorage();
 }
@@ -242,6 +323,14 @@ function drawFaviconToCanvas(canvas, size, config) {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(config.text.substring(0, 3).toUpperCase(), cx, cy);
+    
+  } else if (config.type === 'fontawesome') {
+    const fontSize = size * (config.iconSize / 100);
+    ctx.font = `900 ${fontSize}px "Font Awesome 6 Free", sans-serif`;
+    ctx.fillStyle = config.textColor;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(config.fontAwesomeIcon, cx, cy);
     
   } else if (config.type === 'preset') {
     ctx.save();
@@ -613,12 +702,16 @@ function copyIntegrationCode(elementId, btn) {
 }
 
 // Integration code tab switcher
-function switchIntegrationTab(tabId) {
+function switchIntegrationTab(element, tabId) {
   document.querySelectorAll('.int-tab-btn').forEach(btn => {
     btn.classList.remove('active');
   });
-  const activeBtn = document.querySelector(`.int-tab-btn[onclick="switchIntegrationTab('${tabId}')"]`);
-  if (activeBtn) activeBtn.classList.add('active');
+  if (element) {
+    element.classList.add('active');
+  } else {
+    const activeBtn = document.querySelector(`.int-tab-btn[onclick*="'${tabId}'"]`);
+    if (activeBtn) activeBtn.classList.add('active');
+  }
 
   document.querySelectorAll('.int-pane').forEach(pane => {
     pane.classList.remove('active');
@@ -631,8 +724,9 @@ window.addEventListener('DOMContentLoaded', () => {
   // Load local draft state
   loadDraftFromLocalStorage();
 
-  // Draw Emoji Presets and SVGs list
+  // Draw Emoji, FontAwesome, and SVGs presets lists
   renderPresetEmojis();
+  renderPresetFaIcons();
   renderPresetSvgs();
 
   // Load state parameters to DOM controls
